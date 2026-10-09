@@ -1,6 +1,6 @@
 # 배포 절차와 복구
 
-2026-10-09 사용자 승인 후 예약 API·개인정보 정리 작업, 운영 App Check 설정, 관리자 현황판과 AI 상담 연동을 배포했다. 공개 홈페이지는 검사를 통과한 PR을 main에 병합하면 기존 GitHub Pages 절차로 게시된다. 실제 차량·요금은 임의 등록하지 않았으며 관리자가 등록해야 온라인 선택 목록에 표시된다.
+2026-10-09 사용자 승인 후 예약 API·개인정보 정리 작업, 운영 App Check 설정, 관리자 현황판과 AI 상담 연동을 배포했다. 공개 홈페이지 PR #2를 main에 병합했고 기존 GitHub Pages 게시도 성공했다. 실제 차량·요금은 임의 등록하지 않았으며 관리자가 등록해야 온라인 선택 목록에 표시된다.
 
 ## 1. 기존 환경 백업과 비공개 소스 적용
 
@@ -35,7 +35,7 @@ node scripts/merge-database-rules.cjs current-rules.json merged-rules.json
 
 ## 3. App Check와 예약 API
 
-기존 Firebase 프로젝트 fleet-board-f2345의 웹 앱에 App Check reCAPTCHA 제공자를 등록한다. 사이트 키의 허용 도메인에 pang-rent.github.io를 등록하고 정상적인 Pages 페이지에서 토큰 발급을 확인한다. 실제 테스트를 위해 보안 검사를 끄거나 운영에 디버그 토큰을 넣지 않는다.
+기존 Firebase 프로젝트 fleet-board-f2345의 웹 앱에 App Check reCAPTCHA Enterprise 제공자를 등록한다. Cloud 프로젝트의 점수형 웹 키를 사용하고 사이트 키의 허용 도메인에 pang-rent.github.io를 등록한다. 현재 프론트엔드는 ReCaptchaEnterpriseProvider를 사용하므로 Firebase의 recaptchaEnterpriseConfig.siteKey와 같은 키여야 한다. 위험 점수 하한은 권장 기본값 0.5를 유지한다. 정상적인 Pages 페이지에서 토큰 발급을 확인한다. 실제 테스트를 위해 보안 검사를 끄거나 운영에 디버그 토큰을 넣지 않는다.
 
 backend/.env.fleet-board-f2345를 로컬에 만든다. Git에 포함하지 않는다. 다음 값은 프로젝트의 실제 공개 웹 설정과 reCAPTCHA 사이트 키로 대체한다. 서비스 계정 비밀키와 AI 키는 여기에 추가하거나 프론트엔드로 전달하지 않는다.
 
@@ -90,4 +90,4 @@ gcloud run deploy aiconsult --project fleet-board-f2345 --region asia-northeast3
 
 문제가 있으면 먼저 홈페이지를 기존 커밋으로 되돌리고 새 접수 진입점을 숨긴다. 관리자 페이지 추가 스크립트·메뉴를 이전 리비전으로 되돌리고 AI는 이전 Cloud Run/Functions 리비전으로 복구한다. 새 예약 개인정보 경로의 거부 규칙은 유지한다. 이미 접수된 예약을 DB에서 삭제하지 말고 담당자가 연락·취소 처리한다. 다른 기존 현황판 기능·APK·자료를 함께 되돌리지 않는다.
 
-공식 참고: [RTDB 트랜잭션](https://firebase.google.com/docs/database/admin/save-data), [웹 App Check](https://firebase.google.com/docs/app-check/web/recaptcha-provider), [Firebase 환경변수](https://firebase.google.com/docs/functions/config-env), [Cloud Run 함수 배포](https://docs.cloud.google.com/run/docs/deploy-functions).
+공식 참고: [RTDB 트랜잭션](https://firebase.google.com/docs/database/admin/save-data), [웹 App Check](https://firebase.google.com/docs/app-check/web/recaptcha-enterprise-provider), [Firebase 환경변수](https://firebase.google.com/docs/functions/config-env), [Cloud Run 함수 배포](https://docs.cloud.google.com/run/docs/deploy-functions).
