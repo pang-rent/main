@@ -143,6 +143,16 @@
       if(!r.ok && !d.reply) throw new Error('status ' + r.status);
       t.classList.remove('typing'); t.textContent = d.reply;
       if(r.ok){ state.messages.push({ role: 'assistant', text: d.reply }); fails = 0; }
+      if(Array.isArray(d.recommendations)) {
+        const card = document.createElement('div'); card.className='msg bot';
+        for(const v of d.recommendations.slice(0,3)) {
+          if(!/^[A-Za-z0-9_-]{1,80}$/.test(v.id || '')) continue;
+          const a=document.createElement('a'); a.href='./booking.html?vehicle='+encodeURIComponent(v.id); a.target='_top';
+          a.style.cssText='display:block;padding:12px;border:1px solid #d8e2ef;border-radius:10px;margin:6px 0;color:#1d4ed8;background:#eef4ff;text-decoration:none';
+          a.textContent=v.name+' · 직접 예약하기'+(v.example?' (예시 요금)':''); card.appendChild(a);
+        }
+        if(card.children.length) $('log').appendChild(card);
+      }
       if(d.submitted){ state.submitted = true; doneCard(); }
       save();
     }catch(e){
