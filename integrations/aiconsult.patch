@@ -4,11 +4,11 @@
  const functions = require('@google-cloud/functions-framework');
  const { sendInquiryPush } = require('./inquiry-push');
  const admin = require('firebase-admin');
-+const { catalogForAI, bookingPrompt, extractRecommendations } = require('./booking-catalog');
++const { catalogForAI, bookingPrompt, extractRecommendations, guardUnregisteredPrices } = require('./booking-catalog');
  
  // ── 설정 ──
  const ALLOWED_ORIGINS = [
-@@ -392,11 +393,15 @@
+@@ -392,11 +393,16 @@
      const companyName = '팡팡렌트카';
      const phone = String(prof.phone || '010-5145-8990').slice(0, 20);
  
@@ -21,12 +21,13 @@
      const lt = extractLongterm(raw);
      const nc = extractNewcar(lt.reply);
      let { reply, inquiry } = extractInquiry(nc.reply);
++    reply = guardUnregisteredPrices(reply, catalog, !!nc.req);
 -    if(lt.req) reply = (reply ? reply + '\n\n' : '') + longtermEstimateText(lt.req);
 +    if(lt.req && !catalog.length) reply = (reply ? reply + '\n\n' : '') + '현재 등록된 월렌트 요금표가 준비 중입니다. 담당자에게 문의해주세요.';
      let saved = null;
      if(nc.req) saved = (await db().ref('companyDocs/' + companyId + '/_newcarRates').once('value')).val() || {};
      if(nc.req && !nc.req.price){
-@@ -422,7 +427,7 @@
+@@ -422,7 +428,7 @@
      }
      let submitted = false;
      if(inquiry) submitted = await saveInquiry(companyId, sessionId, inquiry, messages.concat([{ role: 'assistant', text: reply }]));
