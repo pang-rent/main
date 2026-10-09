@@ -88,6 +88,8 @@ gcloud run deploy aiconsult --project fleet-board-f2345 --region asia-northeast3
 
 ## 복구
 
+Cloud Run 함수 소스를 API로 배포할 때 `buildConfig.sourceLocation`만 수정하면 실행 컨테이너는 그대로일 수 있다. 업로드된 소스로 Cloud Run `builds:submit`을 실행하고 Cloud Build 성공을 확인한 뒤 결과 이미지의 digest로 서비스 컨테이너를 갱신해야 한다. 기존 환경변수·서비스 계정·런타임 설정을 보존하고, 새 리비전과 트래픽 연결 및 실제 상담 응답까지 확인한다.
+
 문제가 있으면 먼저 홈페이지를 기존 커밋으로 되돌리고 새 접수 진입점을 숨긴다. 관리자 페이지 추가 스크립트·메뉴를 이전 리비전으로 되돌리고 AI는 이전 Cloud Run/Functions 리비전으로 복구한다. 새 예약 개인정보 경로의 거부 규칙은 유지한다. 이미 접수된 예약을 DB에서 삭제하지 말고 담당자가 연락·취소 처리한다. 다른 기존 현황판 기능·APK·자료를 함께 되돌리지 않는다.
 
 공식 참고: [RTDB 트랜잭션](https://firebase.google.com/docs/database/admin/save-data), [웹 App Check](https://firebase.google.com/docs/app-check/web/recaptcha-enterprise-provider), [Firebase 환경변수](https://firebase.google.com/docs/functions/config-env), [Cloud Run 함수 배포](https://docs.cloud.google.com/run/docs/deploy-functions).
