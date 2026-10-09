@@ -35,7 +35,7 @@ node scripts/merge-database-rules.cjs current-rules.json merged-rules.json
 
 ## 3. App Check와 예약 API
 
-기존 Firebase 프로젝트 fleet-board-f2345의 웹 앱에 App Check reCAPTCHA Enterprise 제공자를 등록한다. Cloud 프로젝트의 점수형 웹 키를 사용하고 사이트 키의 허용 도메인에 pang-rent.github.io를 등록한다. 현재 프론트엔드는 ReCaptchaEnterpriseProvider를 사용하므로 Firebase의 recaptchaEnterpriseConfig.siteKey와 같은 키여야 한다. 위험 점수 하한은 권장 기본값 0.5를 유지한다. 정상적인 Pages 페이지에서 토큰 발급을 확인한다. 실제 테스트를 위해 보안 검사를 끄거나 운영에 디버그 토큰을 넣지 않는다.
+기존 Firebase 프로젝트 fleet-board-f2345의 Firebase App Check API(firebaseappcheck.googleapis.com)가 활성화되어 있는지 먼저 확인한다. 공식 App Check 서비스 계정에는 roles/firebaseappcheck.serviceAgent 전용 역할이 필요하다. 웹 앱에 App Check reCAPTCHA Enterprise 제공자를 등록한다. Cloud 프로젝트의 점수형 웹 키를 사용하고 사이트 키의 허용 도메인에 pang-rent.github.io를 등록한다. 현재 프론트엔드는 ReCaptchaEnterpriseProvider를 사용하므로 Firebase의 recaptchaEnterpriseConfig.siteKey와 같은 키여야 한다. 위험 점수 하한은 권장 기본값 0.5를 유지한다. 정상적인 Pages 페이지에서 토큰 발급을 확인한다. 실제 테스트를 위해 보안 검사를 끄거나 운영에 디버그 토큰을 넣지 않는다.
 
 backend/.env.fleet-board-f2345를 로컬에 만든다. Git에 포함하지 않는다. 다음 값은 프로젝트의 실제 공개 웹 설정과 reCAPTCHA 사이트 키로 대체한다. 서비스 계정 비밀키와 AI 키는 여기에 추가하거나 프론트엔드로 전달하지 않는다.
 
