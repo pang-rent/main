@@ -1,0 +1,8 @@
+{
+  "rules": {
+    ".read": false, ".write": false,
+    "rentalBookingPrivate": { ".read": false, ".write": false },
+    "rentalBookingPhotos": { ".read": false, ".write": false },
+    "rentalBookingRate": { ".read": false, ".write": false, ".indexOn": ["expiresAt"] }
+  }
+}
