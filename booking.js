@@ -12,8 +12,9 @@
     if (!config.firebase || !config.recaptchaSiteKey) { $('result').textContent = '온라인 예약 보안 설정이 준비 중입니다. 요금 확인 후 전화로 문의해주세요.'; return async () => { throw new Error('온라인 예약 보안 설정이 준비 중입니다. 전화로 문의해주세요.'); }; }
     const [{ initializeApp }, { initializeAppCheck, ReCaptchaV3Provider, getToken }] = await Promise.all([import('https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js'), import('https://www.gstatic.com/firebasejs/10.13.0/firebase-app-check.js')]);
     const check = initializeAppCheck(initializeApp(config.firebase, 'pang-rental-booking'), { provider: new ReCaptchaV3Provider(config.recaptchaSiteKey), isTokenAutoRefreshEnabled: true });
-    securityReady = true;
-    return async () => (await getToken(check, false)).token;
+    try { await getToken(check, false); securityReady = true; }
+    catch { $('result').textContent = '예약 보안 확인을 완료하지 못했습니다. 잠시 후 페이지를 다시 열거나 전화로 문의해주세요. 예상 요금은 계속 확인할 수 있습니다.'; }
+    return async () => { if (!securityReady) throw new Error('예약 보안 확인이 필요합니다. 페이지를 다시 열거나 전화로 문의해주세요.'); return (await getToken(check, false)).token; };
   }
   function input() { return { vehicleId: $('vehicle').value, mode: document.querySelector('[name=mode]:checked').value, start: $('start').value + ':00+09:00', end: $('end').value + ':00+09:00', insurance: $('insurance').checked, optionIds: [...document.querySelectorAll('[name=option]:checked')].map(x => x.value) }; }
   function updateVehicle() {
