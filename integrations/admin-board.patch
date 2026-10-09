@@ -1,0 +1,26 @@
+--- a/index.html
++++ b/index.html
+@@ -655,6 +655,7 @@
+ .desktop-vehicle-row .badge.st-running{background:#edf3fc;color:#38689f}.desktop-vehicle-row .badge.st-idle{background:#ebf7f1;color:#438d74}.desktop-vehicle-row .badge.st-prep{background:#edf0f4;color:#627182}
+ }
+ </style>
++<link rel="stylesheet" href="booking-admin.css">
+ </head>
+ <body>
+ 
+@@ -772,6 +773,7 @@
+   <div class="header-actions">
+     <button class="link-btn telegram" onclick="openChatModal()" style="position:relative;"><span class="nav-icon messenger" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 1-8 8H6l-4 3 1-6A8 8 0 1 1 20 11Z"/><path d="M6 10h10M6 14h7"/></svg></span><span>메신저</span><span class="chat-badge" id="chatBadge" style="display:none;top:-6px;right:-6px;">0</span></button>
+     <button class="link-btn" style="color:#f472b6;border:1px solid rgba(244,114,182,.5);position:relative;" onclick="openLocModal()"><span class="nav-icon location" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span>위치보기</span><span class="chat-badge" id="locBadge" style="display:none;top:-6px;right:-6px;">0</span></button>
++    <button id="rentalBookingAdminButton" class="link-btn" hidden onclick="openRentalBookingAdmin()">예약·차량 관리</button>
+     <button class="link-btn" style="color:#34d399;border:1px solid rgba(52,211,153,.5);position:relative;" onclick="openInquiryModal()"><span class="nav-icon call" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8 3 3 5-3 3c1 3 2 4 5 5l3-3 5 3c0 3-2 5-4 5C10 20 4 14 3 7c0-2 2-4 5-4Z"/></svg></span><span>상담</span><span class="chat-badge" id="inqBadge" style="display:none;top:-6px;right:-6px;">0</span></button>
+     <button class="link-btn kakao" style="color:#fde047;border:1px solid rgba(253,224,71,.45);" onclick="openKakaoTalk()"><span class="nav-icon kakao" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3C6 3 2 6 2 11c0 3 2 5 5 6l-1 4 5-3c6 0 11-3 11-7S18 3 12 3Z" fill="currentColor" stroke="none"/><text x="12" y="13" text-anchor="middle" font-family="Arial" font-size="6" font-weight="bold" fill="#fee500" stroke="none">TALK</text></svg></span><span>카카오톡</span></button>
+     <button class="link-btn" id="quickAppBtn" style="color:#fbbf24;border:1px solid rgba(251,191,36,.5);" onclick="openQuickApp()" oncontextmenu="if(window.COMPANY_ROLE==='owner'){event.preventDefault();setupQuickApp();}"><span class="nav-icon favorite" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/></svg></span><span>자주 쓰는 앱</span></button>
+@@ -6090,5 +6092,7 @@
+     });
+   }
+ </script>
++<script src="booking-config.js"></script><script src="booking-admin.js"></script>
++<script>setInterval(function(){var b=document.getElementById('rentalBookingAdminButton');if(b)b.hidden=window.COMPANY_ROLE!=='owner';var d=document.getElementById('rentalBookingAdmin');if(d&&d.open&&(!window._auth?.auth?.currentUser||window.COMPANY_ROLE!=='owner'))d.close();},1000);</script>
+ </body>
+ </html>
