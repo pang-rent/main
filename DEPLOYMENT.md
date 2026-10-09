@@ -1,6 +1,6 @@
 # 배포 절차와 복구
 
-이 변경은 로컬 구현·테스트 완료본이다. 공개 홈페이지 main, 운영 AI 서버, 현황판, 실제 DB 규칙에는 자동 적용하지 않는다. 새 관리자 UI를 확인한 뒤 운영 전용 App Check 설정과 실제 차량·요금을 등록하고 아래 순서로 배포한다.
+2026-10-09 사용자 승인 후 예약 API·개인정보 정리 작업, 운영 App Check 설정, 관리자 현황판과 AI 상담 연동을 배포했다. 공개 홈페이지는 검사를 통과한 PR을 main에 병합하면 기존 GitHub Pages 절차로 게시된다. 실제 차량·요금은 임의 등록하지 않았으며 관리자가 등록해야 온라인 선택 목록에 표시된다.
 
 ## 1. 기존 환경 백업과 비공개 소스 적용
 
@@ -73,7 +73,7 @@ Functions·Cloud Run·RTDB·정기 실행은 사용량에 따라 요금이 발�
 기존 aiconsult 함수의 배포 방식·서비스 계정·FIREBASE_CONFIG를 유지하고 패치된 server/aiconsult 소스를 새 리비전으로 올린다. Cloud Run 함수의 source 배포 방식인 경우 명령 예시는 다음과 같다. 현재 서비스가 Cloud Functions v2로 관리되면 기존 functions 배포 명령을 그대로 사용하며 관리 방식을 임의로 변경하지 않는다.
 
 ```sh
-gcloud run deploy aiconsult --project fleet-board-f2345 --region asia-northeast3 --source /path/to/status-board-source/server/aiconsult --function aiconsult --base-image nodejs22
+gcloud run deploy aiconsult --project fleet-board-f2345 --region asia-northeast3 --source /path/to/status-board-source/server/aiconsult --function aiconsult --base-image nodejs24
 ```
 
 기존 공개 호출 권한·서비스 환경변수·AI 키 저장 경로를 유지한다. 새 차량 자료를 읽을 서버 서비스 계정의 현재 DB 권한을 확인한다. AI 키는 기존 서버 aiSettings에서 읽으며 홈페이지에 넣지 않는다.
