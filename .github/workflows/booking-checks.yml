@@ -1,0 +1,24 @@
+name: Rental booking checks
+on:
+  pull_request:
+  push:
+    branches: [main, feature/direct-rental-booking]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci --prefix backend
+      - run: npm test --prefix backend
+      - run: node --test integrations/aiconsult/booking-catalog.test.js
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm install --global firebase-tools@15
+      - run: firebase emulators:exec --only database --project demo-pang-booking --config firebase.emulators.json "node backend/test/emulator.cjs"
