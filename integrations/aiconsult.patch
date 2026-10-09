@@ -1,0 +1,37 @@
+--- a/server/aiconsult/index.js
++++ b/server/aiconsult/index.js
+@@ -10,6 +10,7 @@
+ const functions = require('@google-cloud/functions-framework');
+ const { sendInquiryPush } = require('./inquiry-push');
+ const admin = require('firebase-admin');
++const { catalogForAI, bookingPrompt, extractRecommendations } = require('./booking-catalog');
+ 
+ // ── 설정 ──
+ const ALLOWED_ORIGINS = [
+@@ -392,11 +393,15 @@
+     const companyName = '팡팡렌트카';
+     const phone = String(prof.phone || '010-5145-8990').slice(0, 20);
+ 
+-    const raw = await callAi(keys, systemPrompt(companyName, phone), messages);
++    const catalog = await catalogForAI(db(), companyId);
++    // Booking catalog supersedes fixed used-car estimates. New-car finance remains a separate consultation product.
++    const prompt = bookingPrompt(systemPrompt(companyName, phone), catalog);
++    const recommendation = extractRecommendations(await callAi(keys, prompt, messages), catalog);
++    const raw = recommendation.reply;
+     const lt = extractLongterm(raw);
+     const nc = extractNewcar(lt.reply);
+     let { reply, inquiry } = extractInquiry(nc.reply);
+-    if(lt.req) reply = (reply ? reply + '\n\n' : '') + longtermEstimateText(lt.req);
++    if(lt.req && !catalog.length) reply = (reply ? reply + '\n\n' : '') + '현재 등록된 월렌트 요금표가 준비 중입니다. 담당자에게 문의해주세요.';
+     let saved = null;
+     if(nc.req) saved = (await db().ref('companyDocs/' + companyId + '/_newcarRates').once('value')).val() || {};
+     if(nc.req && !nc.req.price){
+@@ -422,7 +427,7 @@
+     }
+     let submitted = false;
+     if(inquiry) submitted = await saveInquiry(companyId, sessionId, inquiry, messages.concat([{ role: 'assistant', text: reply }]));
+-    return res.json({ reply: reply || '잠시만요, 다시 한 번 말씀해주시겠어요?', submitted: !!inquiry, firstSubmit: submitted });
++    return res.json({ reply: reply || '잠시만요, 다시 한 번 말씀해주시겠어요?', submitted: !!inquiry, firstSubmit: submitted, recommendations: recommendation.vehicles });
+   }catch(e){
+     console.error(e);
+     return res.status(502).json({ error: 'ai failed' });
